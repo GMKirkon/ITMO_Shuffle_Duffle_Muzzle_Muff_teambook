@@ -2,7 +2,7 @@
 
 \kactlimport{StatisticTree.h}
 \kactlimport{HashMap.h}
-\kactlimport{Segtree.h}
+% \kactlimport{Segtree.h}
 \kactlimport{LazySegmentTree.h}
 % \kactlimport{UnionFind.h}
 \kactlimport{UnionFindRollback.h}
@@ -11,6 +11,53 @@
 \kactlimport{LineContainer.h}
 \kactlimport{RationalLineContainer.h}
 % \kactlimport{Treap.h}
-\kactlimport{FenwickTree2d.h}
+% \kactlimport{FenwickTree2d.h}
 \kactlimport{RMQ.h}
 \kactlimport{MoQueries.h}
+
+\subsection{Segment Tree Beats}
+Ji Driver Segment Tree Beats.
+$min=, max=, sum?, min? max?$ -- store max and second max
+
+$min=, +=, gcd.$
+
+store differences on segment, $a[i] - a[j]$, but only BST of differences, 
+
+$mod=, set, sum?$
+
+break condiiton max > mod
+tag condition max == min.
+
+$sqrt=, +=, sum? max? min?$
+
+store $sum, max, min,$
+break condition just standard segtree $qr <= l || r <= qr$
+tag condition $max - min <= 1$
+
+$div=, +=, sum? max? min?$
+
+store $sum, max, min,$
+break condition just standard segtree $qr <= l || r <= qr$
+tag condition $max - min <= 1$
+
+
+$\&=, |=, max?$
+
+$C = 2^k$ is important the upper bound for numbers.
+store $max, pushand, pushor, and_on_seg, or_on_seg$
+break condition: standard segtree $qr <= l || r <= ql$
+tag condition for and = $ql <= l \&\& r <= qr \&\& ((and_on_seg[v] ^ or_on_seg[v]) \& ~x) == 0$
+tag condition for or = $ql <= l \&\& r <= qr \&\& ((and_on_seg[v] ^ or_on_seg[v]) \& y) == 0$
+
+
+
+
+
+
+
+
+
+
+
+
+
