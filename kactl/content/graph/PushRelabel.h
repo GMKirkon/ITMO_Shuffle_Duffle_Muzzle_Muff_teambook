@@ -9,6 +9,7 @@
  * Status: Tested on Kattis and SPOJ, and stress-tested
  */
 #pragma once
+#include "../../stress-tests/utilities/template.h"
 
 
 struct PushRelabel {

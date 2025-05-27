@@ -10,27 +10,41 @@
  * Status: Tested on kattis:shortestpath3
  */
 #pragma once
+#include "../../stress-tests/utilities/template.h"
+#include "graphs_structures.h"
 
-const ll inf = LLONG_MAX;
-struct Ed { int a, b, w, s() { return a < b ? a : -a; }};
-struct Node { ll dist = inf; int prev = -1; };
-
-void bellmanFord(vector<Node>& nodes, vector<Ed>& eds, int s) {
-	nodes[s].dist = 0;
-	sort(all(eds), [](Ed a, Ed b) { return a.s() < b.s(); });
-
-	int lim = sz(nodes) / 2 + 2; // /3+100 with shuffled vertices
-	rep(i,0,lim) for (Ed ed : eds) {
-		Node cur = nodes[ed.a], &dest = nodes[ed.b];
-		if (abs(cur.dist) == inf) continue;
-		ll d = cur.dist + ed.w;
-		if (d < dest.dist) {
-			dest.prev = ed.a;
-			dest.dist = (i < lim-1 ? d : -inf);
-		}
+template <typename T> vector<T> fordbellman(const graph<T> &g, int start) {
+  assert(0 <= start && start < g.n);
+  constexpr T MAXVALUE = numeric_limits<T>::max(); vector<T> dist(g.n, MAXVALUE);
+  dist[start] = 0; vector<int> pv(g.n, -1);
+  auto relax = [&]() {
+    for (int id = 0; id < g.edges.size(); ++id) {
+      auto& e = g.edges[id];
+      if (dist[e.from] < MAXVALUE) {
+        if (dist[e.to] > dist[e.from] + e.cost) {
+          dist[e.to] = dist[e.from] + e.cost;
+          pv[e.to] = e.from;
+        }
+      }
+    }
+  };
+ 
+  for (int i = 0; i + 1 < g.n; ++i) relax();
+  return dist;
+  /* find cycle with negative value
+  auto cur = dist; relax();
+  int broken = -1;
+  for (int i = 0; i < g.n; ++i) {
+    if (cur[i] != dist[i]) { broken = i; break; }
+  }
+  if (broken == -1) { return {}; }
+	for (int i = 0; i < g.n; ++i) broken = pv[broken];
+	vector<int> path{broken}; broken = pv[broken];
+	while(broken != path[0]) {
+		path.pb(broken);
+		broken = pv[broken];
 	}
-	rep(i,0,lim) for (Ed e : eds) {
-		if (nodes[e.a].dist == -inf)
-			nodes[e.b].dist = -inf;
-	}
+	reverse(all(path));
+	return path;
+  */
 }

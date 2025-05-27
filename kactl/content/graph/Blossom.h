@@ -5,25 +5,17 @@
  * Source: telegram
  * Description: Given a weighted graph, finds max matching
  * Time: O(N^3)
- * Status: not tested
+ * Status: tested on some ptz problem
  */
+#pragma once
+#include "../../stress-tests/utilities/template.h"
 
 struct blossom {
     int n, m;
-    vector<int> mate;
-    vector<vector<int>> b;
-    vector<int> p, d, bl;
-    vector<vector<int>> g;
+    vi mate;   vvi b;
+    vi p, d, bl; vvi g;
 
-    blossom(int n) : n(n) {
-        m = n + n / 2;
-        mate.assign(n, -1);
-        b.resize(m);
-        p.resize(m);
-        d.resize(m);
-        bl.resize(m);
-        g.assign(m, vector<int>(m, -1));
-    }
+    blossom(int n) : n(n) { m = n + n / 2; mate.assign(n, -1); b.resize(m); p.resize(m); d.resize(m); bl.resize(m); g.assign(m, vi(m, -1)); }
     void add_edge(int u, int v) {
         g[u][v] = u;
         g[v][u] = v;
@@ -34,8 +26,8 @@ struct blossom {
         mate[v] = u;
     }
 
-    vector<int> trace(int x) {
-        vector<int> vx;
+    vi trace(int x) {
+        vi vx;
         while(true) {
             while(bl[x] != x) x = bl[x];
             if(!vx.empty() && vx.back() == x) break;
@@ -45,7 +37,7 @@ struct blossom {
         return vx;
     }
 
-    void contract(int c, int x, int y, vector<int> &vx, vector<int> &vy) {
+    void contract(int c, int x, int y, vi &vx, vi &vy) {
         b[c].clear();
         int r = vx.back();
         while(!vx.empty() && !vy.empty() && vx.back() == vy.back()) {
@@ -70,8 +62,8 @@ struct blossom {
         }
     }
 
-    vector<int> lift(vector<int> &vx) {
-        vector<int> A;
+    vi lift(vi &vx) {
+        vi A;
         while(vx.size() >= 2) {
             int z = vx.back(); vx.pop_back();
             if(z < n) {
@@ -118,8 +110,8 @@ struct blossom {
                             d[mate[y]] = 1;
                             Q.push(mate[y]);
                         }else if(d[y] == 1) {
-                            vector<int> vx = trace(x);
-                            vector<int> vy = trace(y);
+                            vi vx = trace(x);
+                            vi vy = trace(y);
                             if(vx.back() == vy.back()) {
                                 contract(c, x, y, vx, vy);
                                 Q.push(c);
@@ -130,8 +122,8 @@ struct blossom {
                                 aug = true;
                                 vx.insert(vx.begin(), y);
                                 vy.insert(vy.begin(), x);
-                                vector<int> A = lift(vx);
-                                vector<int> B = lift(vy);
+                                vi A = lift(vx);
+                                vi B = lift(vy);
                                 A.insert(A.end(), B.rbegin(), B.rend());
                                 for(int i = 0; i < (int) A.size(); i += 2) {
                                     match(A[i], A[i + 1]);

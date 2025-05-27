@@ -16,11 +16,15 @@
  * Status: stress-tested
  */
 #pragma once
+
+#define Size(x) (int)(x).size()
+
+#include "../../stress-tests/utilities/template.h"
+
+
 struct sparse {
     vector<vector<int>> st;
-
     sparse() { }
-
     sparse(const vector<int> &a) {
         int n = Size(a);
         int k = 0;
@@ -33,7 +37,6 @@ struct sparse {
                 st[i][j] = min(st[i - 1][j], st[i - 1][j + (1 << (i - 1))]);
         }
     }
-
     int getMin(int l, int r) {
         int k = 31 - __builtin_clz(r - l);
         return min(st[k][l], st[k][r - (1 << k)]);
@@ -201,6 +204,7 @@ struct SuffixArray {
 
 
 //Another impl
+/*
 struct SuffixArray {
 	vi sa, lcp;
 	SuffixArray(string& s, int lim=256) { // or basic_string<int>
@@ -224,3 +228,4 @@ struct SuffixArray {
 					s[i + k] == s[j + k]; k++);
 	}
 };
+*/

@@ -1,25 +1,24 @@
 /**
- * Author: Simon Lindholm
- * Date: 2016-12-15
+ * Author: Kirill Konovalov
+ * Date: 2025
  * License: CC0
  * Source: http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
  * Description: Calculates all-pairs shortest path in a directed graph that might have negative edge weights.
  * Input is an distance matrix $m$, where $m[i][j] = \texttt{inf}$ if $i$ and $j$ are not adjacent.
  * As output, $m[i][j]$ is set to the shortest distance between $i$ and $j$, \texttt{inf} if no path, or \texttt{-inf} if the path goes through a negative-weight cycle.
  * Time: O(N^3)
- * Status: slightly tested
+ * Status: stress-tested
  */
 #pragma once
+#include "../../stress-tests/utilities/template.h"
+#include "../../content/graph/graphs_structures.h"
 
-const ll inf = 1LL << 62;
-void floydWarshall(vector<vector<ll>>& m) {
-	int n = sz(m);
-	rep(i,0,n) m[i][i] = min(m[i][i], 0LL);
-	rep(k,0,n) rep(i,0,n) rep(j,0,n)
-		if (m[i][k] != inf && m[k][j] != inf) {
-			auto newDist = max(m[i][k] + m[k][j], -inf);
-			m[i][j] = min(m[i][j], newDist);
-		}
-	rep(k,0,n) if (m[k][k] < 0) rep(i,0,n) rep(j,0,n)
-		if (m[i][k] != inf && m[k][j] != inf) m[i][j] = -inf;
+vvl floydWarshall(graph<ll> &g) {
+	static constexpr ll inf = numeric_limits<ll>::max() / 4;
+	int n = g.n; vvl ans(n, vl(n, inf)); for (int i = 0; i < n; i++) ans[i][i] = 0;
+	for (auto& e : g.edges) ans[e.from][e.to] = min(ans[e.from][e.to], e.cost);
+	rep(k, 0, n) rep(i, 0, n) rep(j, 0, n) if (ans[i][k] != inf && ans[k][j] != inf) {
+		ans[i][j] = min(ans[i][j], ans[i][k] + ans[k][j]);
+	}
+	return ans;
 }

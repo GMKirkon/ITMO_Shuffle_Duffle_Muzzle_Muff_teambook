@@ -19,8 +19,7 @@ struct Line {
 struct LineContainer : multiset<Line, less<>> {
 	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
 	static const ll inf = LLONG_MAX;
-	ll div(ll a, ll b) { // floored division
-		return a / b - ((a ^ b) < 0 && a % b); }
+	ll div(ll a, ll b) { return a / b - ((a ^ b) < 0 && a % b); }
 	bool isect(iterator x, iterator y) {
 		if (y == end()) return x->p = inf, 0;
 		if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;

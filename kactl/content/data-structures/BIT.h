@@ -9,9 +9,11 @@
  * Status: Stress-tested
  */
 #pragma once
+#include "../../stress-tests/utilities/template.h"
 
 struct FT {
 	vector<ll> s;
+	FT() {}
 	FT(int n) : s(n) {}
 	void update(int pos, ll dif) { // a[pos] += dif
 		for (; pos < sz(s); pos |= pos + 1) s[pos] += dif;
