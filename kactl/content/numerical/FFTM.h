@@ -13,8 +13,6 @@
  */
 #pragma once
 
-#include "FastFourierTransform.h"
-
 typedef vector<ll> vl;
 template<int M> vl convMod(const vl &a, const vl &b) {
 	if (a.empty() || b.empty()) return {};
