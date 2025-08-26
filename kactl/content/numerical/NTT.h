@@ -51,3 +51,69 @@ vl conv(const vl &a, const vl &b) {
 	ntt(out);
 	return {out.begin(), out.begin() + s};
 }
+
+using Mat = vector<vl>;
+
+//a is NxN, b is MxM
+Mat conv2d_ntt(const Mat& A, const Mat& B) {
+  int ha = (int)A.size(); int wa = ha ? (int)A[0].size() : 0;
+  int hb = (int)B.size(); int wb = hb ? (int)B[0].size() : 0;
+  if (!ha || !wa || !hb || !wb) return {};
+	int H  = ha + hb - 1;
+  int wr = wa + wb - 1;
+
+  // Flatten with stride = wr so column indices never alias between rows.
+  vl A1(ha * wr, 0), B1(hb * wr, 0);
+  rep(i, 0, ha) rep(j, 0, wa) {
+  	ll x = A[i][j] % mod;
+    A1[i * wr + j] = x + (x < 0) * mod;
+  }
+  
+  rep(i, 0, hb) rep(j, 0, wb) {
+  	ll x = B[i][j] % mod;
+    B1[i * wr + j] = x + (x < 0) * mod;
+  }        
+
+  vl C1 = conv(A1, B1);
+  Mat R(H, vl(wr, 0));
+  rep(i, 0, H) rep(j, 0, wr) R[i][j] = C1[i * wr + j] % mod;
+  return R;
+}
+
+Mat conv2d_brute(Mat a, Mat b) {
+  int n = a.size(), m = b.size();
+  Mat ans(n + m - 1, vl(n + m - 1, 0));
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      for (int r = 0; r < m; r++) {
+        for (int c = 0; c < m; c++) {
+          ans[i + r][j + c] += 1LL * a[i][j] * b[r][c] % mod;
+          ans[i + r][j + c] %= mod;
+        }
+      }
+    }
+  }
+  return ans;
+}
+
+Mat rot180(const Mat& K) {
+    int h = (int)K.size(), w = h ? (int)K[0].size() : 0;
+    Mat R(h, vl(w, 0));
+    rep(i, 0, h) rep(j, 0, w)
+      R[h - 1 - i][w - 1 - j] = (K[i][j] % MOD + MOD) % MOD;
+    return R;
+}
+
+Mat correlate2d_ntt(const Mat& A, const Mat& P) {
+    return conv2d_ntt(A, rot180(P));
+}
+
+// Crop the "valid" region (top-left placements of pattern in grid)
+Mat crop_valid(const Mat& Cfull, int ha, int wa, int hb, int wb) {
+    int H = ha - hb + 1, W = wa - wb + 1;
+    int offi = hb - 1, offj = wb - 1;
+    Mat R(H, vl(W, 0));
+    rep(i, 0, H) rep(j, 0, W)
+      R[i][j] = Cfull[i + offi][j + offj];
+    return R;
+}
