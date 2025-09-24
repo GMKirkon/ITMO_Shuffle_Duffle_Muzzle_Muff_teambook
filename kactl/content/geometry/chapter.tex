@@ -21,6 +21,11 @@
 	\kactlimport{MinEnclosCirc.h}
 
 \section{Polygons}
+	\subsection{Centroid}
+		$A=\sum_{i=0}^{n-1}(x_i y_{i+1}-x_{i+1} y_i)
+		$C_{x} = \frac{1}{3A} \sum_{i=0}^{n-1}(x_i+x_{i+1})(x_i y_{i+1} - x_{i+1} y_i)$
+		$C_{y} = \frac{1}{3A} \sum_{i=0}^{n-1}(y_i+y_{i+1})(x_i y_{i+1} - x_{i+1} y_i)$
+
     \kactlimport{extremeVertex.cpp}
 	\kactlimport{pointPolyDist.cpp}
 	\kactlimport{InsidePolygon.h}
