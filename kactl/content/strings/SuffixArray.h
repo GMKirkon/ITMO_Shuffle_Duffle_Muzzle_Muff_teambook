@@ -1,3 +1,13 @@
+/**
+ * Author: andreyDagger
+ * License: Unlicense
+ * Source: andreyDagger
+ * Description: Calculates suffix array
+ * Time: O(N log{n})
+ * Usage: SuffixArray sa(s);
+ * Status: tested on many problems
+ */
+
 struct sparse {
     vector<vector<int>> st;
     sparse() { }
