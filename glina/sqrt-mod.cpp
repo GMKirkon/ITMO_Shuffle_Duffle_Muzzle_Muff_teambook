@@ -1,0 +1,43 @@
+
+ll modmul(ll a, ll b, ll p) {
+  return (a * b) % p;
+}
+
+ll modpow(ll a, ll n, ll p) {
+  ll ret = 1;
+  while (n) {
+    if (n % 2 == 0) {
+      a = modmul(a, a, p);
+      n /= 2;
+    } else {
+      ret = modmul(ret, a, p);
+      n--;
+    }
+  }
+  return ret;
+}
+
+ll sqrt(ll a, ll p) {
+ a %= p; if (a < 0) a += p;
+ if (a == 0) return 0;
+ if (modpow(a, (p-1)/2, p) != 1) return -1;
+ if (p % 4 == 3) return modpow(a, (p+1)/4, p);
+ // aˆ(n+3)/8 or 2ˆ(n+3)/8 * 2ˆ(n-1)/4 works if p % 8 == 5
+ ll s = p - 1, n = 2;
+ int r = 0, m;
+ while (s % 2 == 0) ++r, s /= 2;
+ /// find a non-square mod p
+ while (modpow(n, (p - 1) / 2, p) != p - 1) ++n;
+ ll x = modpow(a, (s + 1) / 2, p);
+ ll b = modpow(a, s, p), g = modpow(n, s, p);
+ for (;;r=m) {
+  ll t = b;
+  for (m = 0; m < r && t != 1; ++m)
+   t = modmul(t, t, p);
+  if (m == 0) return x;
+  ll gs = modpow(g, 1LL << (r - m - 1), p);
+  g = modmul(gs, gs, p);
+  x = modmul(x, gs, p);
+  b = modmul(b, g, p);
+ }
+}
