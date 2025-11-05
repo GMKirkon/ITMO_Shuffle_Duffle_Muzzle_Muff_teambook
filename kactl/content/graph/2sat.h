@@ -22,8 +22,8 @@ struct twosat {
     g.add((x << 1) + (value_x ^ 1), (y << 1) + value_y); g.add((y << 1) + (value_y ^ 1), (x << 1) + value_x); }
   inline void add_impl(int x, int value_x, int y, int value_y) { // (v[x] == value_x -> v[y] == value_y)
     assert(0 <= x && x < n && 0 <= y && y < n); assert(0 <= value_x && value_x <= 1 && 0 <= value_y && value_y <= 1);
-    g.add((x << 1) + (value_x ^ 1), (y << 1) + (value_y ^ 1)); g.add((y << 1) + value_y, (x << 1) + value_x); }
-  inline void add_xor(int x, int y, int value) { // (v[x] == value_x -> v[y] == value_y) 
+    add_edge((y << 1) + (value_y ^ 1), (x << 1) + (value_x ^ 1)); add_edge((x << 1) + value_x, (y << 1) + value_y); }
+  inline void add_xor(int x, int y, int value) { // v[x]^v[y]=value
     assert(0 <= x && x < n && 0 <= y && y < n); assert(0 <= value && value <= 1);
     if (value) { add(x, 1, y, 1); add(x, 0, y, 0); }
     else { add_impl(x, 1, y, 1); add_impl(x, 0, y, 0); } }
