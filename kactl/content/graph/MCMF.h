@@ -30,7 +30,7 @@ template <class F, class C = F> struct MCMF {
     	auto [cur_dist, v] = bfs.top(); bfs.pop();
       if (cur_dist > dist[v]) continue;
       for (auto &e : gr[v]) {
-        auto &E = edges[e]; if (E.flow < E.cap && ckmin(dist[E.to], cur_dist + E.cost + pot[v] - pot[E.to]))
+        auto &E = edges[e]; if (E.flow < E.cap && ckmin(dist[E.to], cur_dist + std::max<C>(0, E.cost + pot[v] - pot[E.to])))
           previous_edge[E.to] = e, bfs.push({dist[E.to], E.to});
       }
     }
