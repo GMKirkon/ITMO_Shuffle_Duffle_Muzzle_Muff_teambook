@@ -46,6 +46,10 @@ int32_t main() {
           int mid = (l + r) / 2;
           if (dp[x] + w(x, mid) < dp[oldk] + w(oldk, mid)) r = mid;
           else l = mid + 1;
+          //SOMETIMES HERE L, R are swapped!!! in one ptz problem it was the other way around, at first later is better then the earlier one
+          //(maybe some change to v array structure would be required as well).
+          //possibility 2) -> LICHAO
+          //LINEAR VERSION: TODO???? (SUPER SMAWK)
         }
         if (r != n + 1) v.push_back(make_pair(r, x));
         break;
