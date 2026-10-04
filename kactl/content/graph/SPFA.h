@@ -12,6 +12,7 @@
  * Status: stress-tested
  */
 #pragma once
+#include "../../stress-tests/utilities/template.h"
 #include "graphs_structures.h"
 
 template <typename T> vector<T> spfa(const graph<T> &g, int start, vector<int> &cycle) {
