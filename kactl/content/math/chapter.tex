@@ -71,6 +71,57 @@ y = r\sin\theta\sin\phi & \theta = \textrm{acos}(z/\sqrt{x^2+y^2+z^2})\\
 z = r\cos\theta & \phi = \textrm{atan2}(y,x)
 \end{array}\]
 
+All points below are unit vectors; angles are in radians.
+Let $U(v)=v/\|v\|$ for $v\ne0$.
+Great circles are sections by planes through the origin.
+Defining pairs are distinct and not antipodal.
+For a short arc $\widehat{ab}$, assume $0<d(a,b)<\pi$.
+
+Distance between points:
+\[\begin{aligned}
+d(a,b)&=\arccos(a\cdot b)\\
+&=\operatorname{atan2}(\|a\times b\|,a\cdot b).
+\end{aligned}\]
+
+Distance to the great circle through $a,b$, with $n=a\times b$:
+\[\begin{aligned}
+d(p,ab)&=\arcsin\frac{|p\cdot n|}{\|n\|}\\
+&=\operatorname{atan2}(|p\cdot n|,\|p\times n\|).
+\end{aligned}\]
+
+Nearest point on the great circle:
+\[
+v=p-n\frac{p\cdot n}{n\cdot n},\qquad q=U(v).
+\]
+If $v=0$, every point of the circle is at distance $\pi/2$.
+
+Short arc membership, including endpoints:
+\[
+q\in\widehat{ab}\iff
+\begin{cases}
+n\cdot q=0,\\
+(a\times q)\cdot n\ge0,\\
+(q\times b)\cdot n\ge0.
+\end{cases}
+\]
+
+Distance to the short arc, using $v,q$ above:
+\[
+d(p,\widehat{ab})=
+\begin{cases}
+\pi/2,&v=0,\\
+d(p,q),&v\ne0,\ q\in\widehat{ab},\\
+\min(d(p,a),d(p,b)),&\text{otherwise}.
+\end{cases}
+\]
+
+Intersection of great circles through $a,b$ and $c,d$:
+\[
+m=(a\times b)\times(c\times d),\qquad x=\pm U(m).
+\]
+If $m=0$, the circles coincide.
+For arc intersections, test both candidates for membership in both arcs.
+
 \section{Derivatives/Integrals}
 \begin{align*}
 	\dfrac{d}{dx}\arcsin x = \dfrac{1}{\sqrt{1-x^2}} &&& \dfrac{d}{dx}\arccos x = -\dfrac{1}{\sqrt{1-x^2}} \\
