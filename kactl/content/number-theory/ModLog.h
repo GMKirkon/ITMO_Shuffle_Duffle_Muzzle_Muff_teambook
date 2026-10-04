@@ -32,6 +32,9 @@
  */
 #pragma once
 
+#include "Factor.h"
+#include "euclid.h"
+
 ll modLog(ll a, ll b, ll m) {
 	ll n = (ll) sqrt(m) + 1, e = 1, f = 1, j = 1;
 	unordered_map<ll, ll> A;
@@ -42,4 +45,74 @@ ll modLog(ll a, ll b, ll m) {
 		rep(i,2,n+2) if (A.count(e = e * f % m))
 			return n * i - A[e];
 	return -1;
+}
+
+/**
+ * Batch queries (a,b): smallest x >= 0 with a^x = b (mod m),
+ * or -1. Requires m >= 2 with a primitive root and gcd(a,m)=1.
+ * Unlike modLog, x=0 is allowed. Non-unit b has no solution.
+ * After finding a primitive root, expected time is
+ * O(sqrt(n * phi(m)) + n * log(m)), memory
+ * O(min(phi(m), sqrt(n * phi(m)))) besides the answers.
+ * Status: stress-tested.
+ */
+vi modLogs(const vector<pii>& q, int m) {
+	int n = sz(q);
+	if (!n) return {};
+	assert(m >= 2);
+	map<ul, int> f;
+	factor_rec(m, f);
+	assert(m == 2 || m == 4 ||
+		(m % 4 && sz(f) - (int)f.count(2) == 1));
+	int ph = m;
+	for (auto p : f) ph -= ph / (int)p.first;
+	f.clear();
+	factor_rec(ph, f);
+
+	int g = m == 2 ? 1 : 2;
+	for (;; ++g) {
+		if (__gcd(g, m) != 1) continue;
+		bool ok = true;
+		for (auto p : f)
+			if (modPow(g, ph / p.first, m) == 1)
+				ok = false;
+		if (ok) break;
+	}
+
+	int k = max(1, (int)sqrt((long double)ph / n));
+	int cnt = (ph - 1) / k + 1;
+	unordered_map<int, int> mp;
+	mp.max_load_factor(0.7f);
+	mp.reserve(cnt + 1);
+	ll step = (ll)modPow(g, k, m), cur = 1;
+	rep(i,0,cnt+1) {
+		mp[(int)cur] = i;
+		cur = cur * step % m;
+	}
+	auto lg = [&](int x) {
+		x %= m; if (x < 0) x += m;
+		if (__gcd(x, m) != 1) return -1;
+		ll cur = x;
+		rep(j,0,k) {
+			auto it = mp.find((int)cur);
+			if (it != mp.end()) {
+				ll z = ((ll)it->second * k - j) % ph;
+				return (int)(z < 0 ? z + ph : z);
+			}
+			cur = cur * g % m;
+		}
+		return -1;
+	};
+
+	vi ans(n, -1);
+	rep(i,0,n) {
+		int A = lg(q[i].first), B = lg(q[i].second);
+		assert(A != -1);
+		if (B == -1) continue;
+		ll x, y, d = euclid(A, ph, x, y);
+		if (B % d) continue;
+		ll mod = ph / d;
+		ans[i] = (int)((B / d * x % mod + mod) % mod);
+	}
+	return ans;
 }
