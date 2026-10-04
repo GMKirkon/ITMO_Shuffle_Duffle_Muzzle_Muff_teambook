@@ -6,8 +6,10 @@
  * Status: tested on https://acm.timus.ru/problem.aspx?space=1&num=2196
  */
 
-inline int orientation(PT a, PT b, PT c) { return sign(cross(b - a, c - a)); }
+template <typename PT>
+inline int orientation(PT a, PT b, PT c) { return sgn((b - a).cross(c - a)); }
 
+template <typename PT>
 pair<PT, int> point_poly_tangent(vector<PT> &p, PT Q, int dir, int l, int r) {
     while (r - l > 1) {
         int mid = (l + r) >> 1;
@@ -35,14 +37,72 @@ pair<PT, int> point_poly_tangent(vector<PT> &p, PT Q, int dir, int l, int r) {
     return ret;
 }
 
-pair<int, int> tangents_from_point_to_polygon(vector<PT> &p, PT Q){
+template <typename PT>
+bool on_seg(PT a, PT b, PT q) {
+    if (orientation(a, b, q)) return false;
+    return min(a.x, b.x) <= q.x && q.x <= max(a.x, b.x) &&
+           min(a.y, b.y) <= q.y && q.y <= max(a.y, b.y);
+}
+
+template <typename PT>
+bool same_point(PT a, PT b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+template <typename PT>
+pair<int, int> boundary_tangents(vector<PT> &p, PT Q) {
+    int n = p.size();
+    int s = orientation(p[0], p[1], p[n - 1]);
+
+    auto vertex = [&](int v) {
+        int l = (v + n - 1) % n;
+        int r = (v + 1) % n;
+        return s == 1 ? make_pair(r, l) : make_pair(l, r);
+    };
+
+    auto edge = [&](int l, int r) {
+        return s == 1 ? make_pair(r, l) : make_pair(l, r);
+    };
+
+    if (same_point(Q, p[0])) return vertex(0);
+
+    if (on_seg(p[0], p[1], Q)) {
+        if (same_point(Q, p[1])) return vertex(1);
+        return edge(0, 1);
+    }
+
+    if (on_seg(p[n - 1], p[0], Q)) {
+        if (same_point(Q, p[n - 1])) return vertex(n - 1);
+        return edge(n - 1, 0);
+    }
+
+    int l = 1, r = n - 1;
+    while (r - l > 1) {
+        int mid = (l + r) >> 1;
+        if (orientation(p[0], p[mid], Q) * s >= 0) l = mid;
+        else r = mid;
+    }
+
+    if (!on_seg(p[l], p[r], Q)) return {-1, -1};
+    if (same_point(Q, p[l])) return vertex(l);
+    if (same_point(Q, p[r])) return vertex(r);
+    return edge(l, r);
+}
+
+template <typename PT>
+pair<int, int> tangents_from_point_to_polygon(vector<PT> &p, PT Q) {
+    // Remove this if you know that point doesn't lie on boundary
+    auto b = boundary_tangents(p, Q);
+    if (b.first != -1) return b;
+
     int ccw = point_poly_tangent(p, Q, 1, 0, (int)p.size() - 1).second;
     int cw = point_poly_tangent(p, Q, -1, 0, (int)p.size() - 1).second;
-    return make_pair(ccw, cw);
+    return {ccw, cw};
 }
 
 // minimum distance from a point to a convex polygon
 // it assumes point lie strictly outside the polygon
+template <typename PT>
 double dist_from_point_to_polygon(vector<PT> &p, PT z) {
     double ans = inf;
     int n = p.size();
